@@ -1,0 +1,65 @@
+# 智能旅行助手 — Docker Compose 编排
+# 使用: docker compose --env-file .env.docker up -d --build
+
+services:
+  # ============ 后端 ============
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: trip-planner-backend
+    # 默认不映射到宿主机, 仅容器内网可访问 (更安全)
+    # 如需直接访问后端, 取消下方 ports 注释
+    # ports:
+    #   - "8000:8000"
+    env_file:
+      - .env.docker
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:8080}
+    networks:
+      - trip-net
+    healthcheck:
+      # 健康检查: 调用 /health 端点
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============ 前端 ============
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Vite 编译期注入的变量 (修改后需重建前端镜像)
+        VITE_API_BASE_URL: "/"
+        VITE_AMAP_WEB_KEY: ${AMAP_API_KEY}
+        VITE_AMAP_WEB_JS_KEY: ${VITE_AMAP_WEB_JS_KEY}
+    container_name: trip-planner-frontend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - trip-net
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# ============ 网络 ============
+networks:
+  trip-net:
+    driver: bridge

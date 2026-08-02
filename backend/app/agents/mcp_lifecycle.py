@@ -36,12 +36,18 @@ async def init_mcp_client():
 
         # langchain-mcp-adapters 0.3.x API:
         # 传入服务器配置字典，不再使用 context manager
+        # server_configs: Dict[str, Dict[str, Any]] = {
+        #     "amap": {
+        #         "transport": "stdio",
+        #         "command": "uvx",
+        #         "args": ["amap-mcp-server"],
+        #         "env": {"AMAP_MAPS_API_KEY": settings.amap_api_key},
+        #     }
+        # }
         server_configs: Dict[str, Dict[str, Any]] = {
             "amap": {
-                "transport": "stdio",
-                "command": "uvx",
-                "args": ["amap-mcp-server"],
-                "env": {"AMAP_MAPS_API_KEY": settings.amap_api_key},
+                "transport": "http",
+                "url": f"https://mcp.amap.com/mcp?key={settings.amap_api_key}",
             }
         }
 
