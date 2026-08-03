@@ -2,7 +2,7 @@
 
 基于 **LangChain + LangGraph** 多智能体框架构建的 AI 旅行规划助手,通过 MCP 协议集成高德地图服务,提供个性化的旅行计划生成。
 
-> 📌 **v2.0.0** — 基于 LangChain + LangGraph 构建。详见 [架构文档](docs/ARCHITECTURE.md) 和 [项目分析](docs/PROJECT_ANALYSIS.md)。
+> 📌 **v2.0.0** — 基于 LangChain + LangGraph 构建。详见 [架构文档](docs/ARCHITECTURE.md)。
 
 ## ✨ 功能特点
 

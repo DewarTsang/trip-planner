@@ -1,4 +1,4 @@
-docs/
+local_docs/
 
 # Docker 部署敏感文件 (含 API 密钥, 勿提交)
 .env.docker
